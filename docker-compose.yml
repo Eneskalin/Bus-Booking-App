@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    build: .  
+    container_name: php_sqlite_web_app
+    ports:
+      - "8080:80" # 
+    volumes:
+      - .:/var/www/html/
+      - D:\sıbervatan\docker\db\bus.sqlite:/var/www/html/bus.sqlite 
+      - ./.env:/var/www/html/.env
+    restart: always 

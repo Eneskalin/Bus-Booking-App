@@ -1,0 +1,482 @@
+:root {
+  --bulma-primary-h: 125deg;
+  --bulma-primary-s: 19%;
+  --bulma-primary-l: 25%;
+  --bulma-link-h: 39deg;
+  --bulma-link-s: 96%;
+  --bulma-link-l: 54%;
+  --bulma-info-h: 32deg;
+  --bulma-info-s: 98%;
+  --bulma-info-l: 83%;
+  --bulma-body-background-color: #fffffff;
+  --bulma-skeleton-background: ;
+  --primary-color:#354d37;
+  --secondery-color:#faad1a;
+}
+
+
+.navbar{
+    background-color: var(--primary-color);
+    margin-top: 2%;
+    border-radius: 25px;
+}
+
+.search-card{
+    background-color: var(--secondery-color);
+    padding: 3%;
+    border-radius: 25px;
+}
+
+ .trip-card {
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+  }
+  
+  .trip-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-color: var(--primary-color);
+  }
+  
+  .company-logo {
+      text-align: center;
+  }
+  
+  .company-logo img {
+      max-width: 80px;
+      height: auto;
+      border-radius: 8px;
+  }
+  
+  .company-name {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      font-weight: 600;
+  }
+  
+  .trip-info h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+  }
+  
+  .trip-info p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+  }
+  
+  .duration-info {
+      position: relative;
+  }
+  
+  .duration {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+  }
+  .title{
+    color: #faad1a;
+  }
+
+  .map{
+    width:100%;
+
+  }
+
+
+
+  #aksaray{
+    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/aksaray/tuz-golu.jpg");
+    background-size: cover;
+  }
+  #nevsehir{
+    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/nevsehir/1-ortahisar-castle.jpg");
+    background-size: cover;
+  }
+    #nigde{
+    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/nigde/1-tyana-su-kemerleri-2.jpg");
+    background-size: cover;
+  }
+    #kayseri{
+    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/kayseri/soganli-yilanli-church.jpg");
+    background-size: cover;
+  }
+  .box{
+    background-color: #faad1a;
+  }
+  .hero-body{
+    align-items: center;
+    justify-content: center;
+    display: block;
+}
+
+  .route-line {
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      margin: 0.5rem auto;
+      border-radius: 1px;
+  }
+  
+  .price-info {
+      text-align: center;
+  }
+  
+  .price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.25rem;
+  }
+  
+  .price-per-person {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+  }
+  
+
+
+.contenido {
+  margin: 30px auto;
+  max-height: 430px;
+  max-width: 245px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgb(202, 202, 204);
+  border-radius: 2px;
+}
+.details {
+  padding: 26px;
+  background:white;
+  border-top: 1px dashed #c3c3c3;
+}
+.tinfo {
+  font-size: 0.5em;
+  font-weight: 300;
+  color: #c3c3c3;
+  font-family: 'Roboto', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin:7px 0;
+}
+
+
+
+.tdata {
+  font-size: 0.7em;
+  font-weight: 400;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+  margin:7px 0;
+}
+
+.name {
+  font-size: 1.3em;
+  font-weight: 300;
+}
+
+.link {
+  text-align: center;
+  margin-top:10px;
+}
+
+
+
+a {
+  text-decoration: none;
+  color:#55C9E6;  
+  font-weight: 400;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.7px;
+  font-size: 0.7em;
+}
+.hqr{
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  margin: 0px auto;
+}
+  .left-one{
+  background-repeat: no-repeat;
+  background-image: radial-gradient(circle at 0 96% , rgba(0,0,0,0) .2em, gray .3em, white .1em);
+}
+  .right-one{
+  background-repeat: no-repeat;
+  background-image: radial-gradient(circle at 100% 96% , rgba(0,0,0,0) .2em, gray .3em, white .1em);
+}
+.column
+{
+    display: table-cell;
+    padding: 27px 0px;
+}
+.center{
+  background:white;
+}
+
+#qrcode img{
+  height:70px;
+  width:70px;
+  margin: 0 auto;
+}
+.masinfo{
+  display:block;
+}
+.left,.right{
+  width:49%;
+  display:inline-table;
+}
+
+.nesp{
+  letter-spacing: 0px;
+}
+
+button {
+  border: none;
+  display: flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #488aec;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
+}
+
+button:hover {
+  box-shadow:
+    0 10px 15px -3px #488aec4f,
+    0 4px 6px -2px #488aec17;
+}
+
+button:focus,
+button:active {
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+
+
+
+.svg-container{
+  width: 100%;
+  max-width: 480px; 
+  margin: 0 auto;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+
+#bus_svg{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#bus_svg svg,
+#bus_svg img{
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 600px){
+  .svg-container{ max-width: 320px; aspect-ratio: 4/3; }
+}
+
+
+
+
+
+
+
+
+
+
+
+.ticket {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  margin: 20px auto;
+  box-sizing: border-box;
+}
+
+.ticket .stub,
+.ticket .check {
+  box-sizing: border-box;
+}
+
+.stub {
+  background: #fbb532;
+  height: 250px;
+  width: 250px;
+  color: white;
+  padding: 20px;
+  position: relative;
+}
+
+.stub:before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  border-top: 20px solid #fbb532;
+  border-left: 20px solid #fbb532;
+  width: 0;
+}
+
+.stub:after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  border-bottom: 20px solid #fbb532;
+  border-left: 20px solid #fbb532;
+  width: 0;
+}
+
+.stub .top {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  text-transform: uppercase;
+}
+
+.stub .top .line {
+  display: block;
+  background: #fff;
+  height: 40px;
+  width: 3px;
+  margin: 0 20px;
+}
+
+.stub .top .num { font-size: 10px; }
+.stub .top .num span { color: #000; }
+
+.stub .number {
+  position: absolute;
+  left: 40px;
+  font-size: 150px;
+}
+
+.stub .invite {
+  position: absolute;
+  left: 150px;
+  bottom: 45px;
+  color: #000;
+  width: 20%;
+}
+
+.stub .invite:before {
+  content: '';
+  background: #fff;
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin-bottom: 5px;
+}
+
+.check {
+  background: #fff;
+  height: 250px;
+  width: 450px;
+  padding: 40px;
+  position: relative;
+}
+
+.check:before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  border-top: 20px solid #fbb532;
+  border-right: 20px solid #fff;
+  width: 0;
+}
+
+.check:after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  border-bottom: 20px solid #fbb532;
+  border-right: 20px solid #fff;
+  width: 0;
+}
+
+.check .big {
+  font-size: 80px;
+  font-weight: 900;
+  line-height: .8em;
+}
+
+.check .number {
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  color: #fbb532;
+  font-size: 40px;
+}
+
+.check .info {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 12px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.check .info section { margin-right: 50px; }
+.check .info section:before{
+  content: '';
+  background: #fbb532;
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin-bottom: 5px;
+}
+
+.check .info .title {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+
+
+/* Responsive behavior: stack and scale on small screens */
+@media (max-width: 800px){
+  .ticket { width: 90%; flex-direction: column; gap: 16px; }
+  .stub, .check { width: 100%; height: auto; padding: 20px; }
+  .stub .number { position: relative; left: 0; font-size: 60px; margin-bottom: 8px; }
+  .check .big { font-size: 48px; }
+  .check .number { position: relative; top: 0; right: 0; text-align: right; }
+  .check .info { flex-direction: column; gap: 8px; }
+}
+
+@media (max-width: 420px){
+  .stub .number { font-size: 42px; }
+  .check .big { font-size: 36px; }
+}
+  
