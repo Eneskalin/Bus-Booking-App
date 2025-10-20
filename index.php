@@ -131,32 +131,8 @@
         </div>
     </section>
 
-    <div class="container is-justify-content-center	 columns">
-        <a href="https://aksaray.goturkiye.com/tr-tr/anasayfa" target="_blank">
-            <div class="column box" id="aksaray">
-                <h3 class="subtitle is-size-2">Gezsen</h3>
-                <h2 class="title">Aksaray</h2>
-            </div>
-        </a>
-
-        <a href="https://nevsehir.goturkiye.com/tr-tr/anasayfa" target="_blank">
-            <div class="column box ml-6" id="nevsehir">
-                <h3 class="subtitle is-size-2">Gezsen</h3>
-                <h2 class="title">Nevsehir</h2>
-            </div>
-        </a>
-        <a href="https://nigde.goturkiye.com/tr-tr/anasayfa" target="_blank">
-            <div class="column box ml-6" id="nigde">
-                <h3 class="subtitle is-size-2">Gezsen</h3>
-                <h2 class="title">Nigde</h2>
-            </div>
-        </a>
-        <a href="https://kayseri.goturkiye.com/tr-tr/anasayfa" target="_blank">
-            <div class="column box ml-6" id="kayseri">
-                <h3 class="subtitle is-size-2">Gezsen</h3>
-                <h2 class="title">Kayseri</h2>
-            </div>
-        </a>
+    <div class="container">
+    <img id="banner" src="./img/banner.png" alt="" style="width: 60%; align-items: center; justify-content: center; display: flex; margin: auto; "  >
 
 
     </div>

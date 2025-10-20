@@ -24,8 +24,6 @@ $(document).ready(function(){
                 }
             },
             error: function() {
-                                console.log(response);
-
                 loginBtn.show();
                 profileBtn.hide();
             }

@@ -8,44 +8,15 @@ header('Content-Type: application/json');
 
 require '../vendor/autoload.php';
 require '../system/function.php';
+require_once '../auth/verify_token.php';
 
 
 
-$secret_key = $_ENV['JWT_SECRET_KEY'] ?? '';
 $token_ticket = $_ENV['TICKET_TOKEN'] ?? '';
 
 
-if (!$secret_key) {
-    echo json_encode(['status' => 'error', 'message' => 'JWT secret tanımlı değil.']);
-    exit;
-}
 
-// =====================
-// 2️⃣ JWT doğrulama fonksiyonu
-// =====================
-function verifyJWT($jwt_token, $secret_key)
-{
-    if (empty($jwt_token)) {
-        return ['valid' => false, 'message' => 'Token bulunamadı.'];
-    }
 
-    try {
-        $decoded = JWT::decode($jwt_token, new Key($secret_key, 'HS256'));
-        if ($decoded->exp < time()) {
-            return ['valid' => false, 'message' => 'Token süresi dolmuş.'];
-        }
-        return [
-            'valid' => true,
-            'data' => [
-                'user_id' => $decoded->data->user_id,
-                'username' => $decoded->data->username,
-                'role' => $decoded->data->role
-            ]
-        ];
-    } catch (\Exception $e) {
-        return ['valid' => false, 'message' => 'Token doğrulanamadı: ' . $e->getMessage()];
-    }
-}
 
 // =====================
 // 3️⃣ Header'dan token al
@@ -71,7 +42,7 @@ if (!$token) {
 // =====================
 // 4️⃣ Token doğrula
 // =====================
-$result = verifyJWT($token, $secret_key);
+$result = verifyJWT($token);
 if (!$result['valid']) {
     echo json_encode(['status' => 'error', 'message' => $result['message']]);
     exit;

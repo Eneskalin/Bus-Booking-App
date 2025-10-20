@@ -1,10 +1,10 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 require_once './system/config.php';
-require_once './auth/verfiy_ticket_token.php';
-require_once './handlers/getBalance.php';
-require_once './handlers/getseats.php';
-require_once './handlers/getTicketInfo.php';
+require_once './auth/verify_ticket_token.php';
+require_once './helpers/getBalance.php';
+require_once './helpers/getseats.php';
+require_once './helpers/getTicketInfo.php';
 
 $ticket_key = $_ENV['TICKET_TOKEN'] ?? '';
 
@@ -20,7 +20,7 @@ if (empty($ticket)) {
     exit;
 }
 
-$result = verifyJWT($ticket, $ticket_key);
+$result = verifyTicket($ticket, $ticket_key);
 
 if (!$result['valid']) {
     echo json_encode(['status' => 'error', 'message' => $result['message']]);
@@ -30,7 +30,7 @@ if (!$result['valid']) {
 $data = $result['data'];
 
 $balance = getBalance($data['user_id']);
-$booked_seats = getSeats(1);
+$booked_seats = getSeats($data['trip_id']);
 
 $ticket_info=getTicketInfo($data['trip_id']);
 $arrival_parts = explode(' ', $ticket_info['arrival_time']);
@@ -521,7 +521,78 @@ $arrival_time = $arrival_parts[1];
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="./js/seatselect.js"></script>
     <script src="./js/navbar.js"></script>
-    <script src="./js/payment.js"></script>
+    <script>
+
+        
+    const notyf = new Notyf({
+        duration: 3000,
+        position: { x: 'right', y: 'top' },
+        dismissible: true,
+    });
+
+    
+    const $paymentBtn = $('#payment');
+    const token = localStorage.getItem("token");
+
+    function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const value = urlParams.get(name);
+    
+    return value ? value : null;
+}
+const ticketToken = getUrlParameter('ticket');
+
+
+    if ($paymentBtn.length) {
+         
+        $paymentBtn.on('click', async function() {
+           
+           
+            if (selectedSeats.length === 0) {
+                notyf.error("Lütfen en az bir koltuk seçin.");
+                return;
+            }
+
+            if(selectedSeats.length != passengers){
+            notyf.error(`Yolcu sayısı kadar koltuk seçebilirsiniz.`);
+            return;
+            }
+            const requestBody = {
+                selected_seats: selectedSeats 
+            };
+
+            const url = `http://localhost:8080/handlers/payment.php?ticket=${ticketToken}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(requestBody) 
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.status === 'error') {
+                    const errorMessage = data.message || `İstek başarısız oldu. Durum kodu: ${response.status}`;
+                    notyf.error(errorMessage);
+                    console.error("Fetch Error:", data);
+                    return;
+                }
+
+                window.location.href="/purchase.php"
+
+            } catch (error) {
+                notyf.error("Sunucuya bağlanılamadı veya bir hata oluştu.");
+                console.error("Ağ Hatası:", error);
+            }
+        });
+    }
+
+    </script>
 
 </body>
 

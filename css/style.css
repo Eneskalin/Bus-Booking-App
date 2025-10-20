@@ -89,24 +89,15 @@
 
 
 
-  #aksaray{
-    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/aksaray/tuz-golu.jpg");
-    background-size: cover;
-  }
-  #nevsehir{
-    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/nevsehir/1-ortahisar-castle.jpg");
-    background-size: cover;
-  }
-    #nigde{
-    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/nigde/1-tyana-su-kemerleri-2.jpg");
-    background-size: cover;
-  }
-    #kayseri{
-    background-image: url("https://storage.googleapis.com/goturkiyev2-storage/Root/kayseri/soganli-yilanli-church.jpg");
-    background-size: cover;
-  }
-  .box{
-    background-color: #faad1a;
+
+
+  #banner{
+    width: 20px;
+
+    align-items: center;
+    margin: auto;
+    justify-content: center;
+    display: flex;
   }
   .hero-body{
     align-items: center;

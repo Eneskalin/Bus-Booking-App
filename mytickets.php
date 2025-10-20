@@ -1,6 +1,12 @@
+<?php
+
+
+
+
+?>
+
 <!DOCTYPE html>
 <html>
-
 
 <?php require_once 'inc/header.php' ?>
 
@@ -8,10 +14,10 @@
 <body>
 
     <?php require_once 'inc/navbar.php'; ?>
-
+    
     <section class="section">
         <h1 class="title">Biletlerim</h1>
-        <div class="container">
+        <div class="container" id="ticketList">
             <div class="columns">
                 <div class="column is-9">
                     <div class="trip-results ">
@@ -63,6 +69,10 @@
                                                         <i class="bi bi-arrow-right mr-2"></i>
                                                         İptal Et
                                                     </button>
+                                                                                                        <button class="button is-link    is-fullwidth mt-2" type="submit">
+                                                        <i class="bi bi-arrow-down mr-2"></i>
+                                                        İndir
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
@@ -72,10 +82,13 @@
                 </div>
             </div>
         </div>
+        
     </section>
 
 
     <?php require_once 'inc/footer.php'; ?>
 </body>
+<script src="./js/navbar.js"></script>
+<script src="./js/userTickets.js"></script>
 
 </html>

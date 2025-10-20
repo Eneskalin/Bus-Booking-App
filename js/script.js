@@ -58,7 +58,7 @@ $(function () {
         const postData = form.serialize();
 
         $.ajax({
-            url: "http://localhost:8080/auth/auth.php",
+            url: "http://localhost:8080/handlers/login.php",
             method: "POST",
             data: postData,
             dataType: "json",
@@ -168,7 +168,7 @@ buyButtons.forEach(function (button, index) {
                 button.disabled = false;
                 button.classList.remove('is-loading');
             }
-            // Bilinmeyen format
+            
             else {
                 console.warn("⚠️ Bilinmeyen yanıt formatı:", data);
                 notyf.error("Beklenmeyen yanıt alındı.");

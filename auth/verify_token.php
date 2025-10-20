@@ -1,28 +1,27 @@
 <?php
-require '../vendor/autoload.php';
-require '../system/function.php'; 
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Dotenv\Dotenv;
 
-header('Content-Type: application/json');
-
-try {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
-} catch (\Exception $e) {
-    error_log("Dotenv Yükleme Hatası: " . $e->getMessage());
-    echo json_encode(['status' => 'error', 'message' => 'Sunucu yapılandırma hatası.']);
-    exit;
+if (!isset($_ENV['JWT_SECRET_KEY'])) {
+    try {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv->safeLoad();
+    } catch (\Exception $e) {
+        error_log("Dotenv Yükleme Hatası: " . $e->getMessage());
+    }
 }
-
-$secret_key = $_ENV['JWT_SECRET_KEY'];
-
 
 function verifyJWT($jwt_token)
 {
-    global $secret_key;
+    $secret_key = $_ENV['JWT_SECRET_KEY'] ?? null;
+    
+    if (!$secret_key) {
+        return ['valid' => false, 'message' => 'JWT Secret yapılandırılmamış.'];
+    }
 
     try {
         $decoded = JWT::decode($jwt_token, new Key($secret_key, 'HS256'));
@@ -49,31 +48,40 @@ function verifyJWT($jwt_token)
     }
 }
 
-$headers = getallheaders();
-$jwt_token = null;
+// ============================================
+//  (API olarak)
+// ============================================
+if (basename($_SERVER['SCRIPT_FILENAME']) === 'verify_token.php') {
+    header('Content-Type: application/json');
+    
+    $headers = getallheaders();
+    $jwt_token = null;
 
-if (isset($headers['Authorization'])) {
-    $jwt_token = str_replace('Bearer ', '', $headers['Authorization']);
-} elseif (isset($_POST['token'])) {
-    $jwt_token = $_POST['token'];
-}
+    if (isset($headers['Authorization'])) {
+        $jwt_token = str_replace('Bearer ', '', $headers['Authorization']);
+    } elseif (isset($_POST['token'])) {
+        $jwt_token = $_POST['token'];
+    }
 
-if (!$jwt_token) {
-    echo json_encode(['status' => 'error', 'message' => 'Token bulunamadı.']);
+    if (!$jwt_token) {
+        echo json_encode(['status' => 'error', 'message' => 'Token bulunamadı.']);
+        exit;
+    }
+
+    $result = verifyJWT($jwt_token);
+
+    if ($result['valid']) {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Token geçerli.',
+            'user' => $result['data']
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => $result['message']
+        ]);
+    }
     exit;
 }
-
-$result = verifyJWT($jwt_token);
-
-if ($result['valid']) {
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Token geçerli.',
-        'user' => $result['data']
-    ]);
-} else {
-    echo json_encode([
-        'status' => 'error',
-        'message' => $result['message']
-    ]);
-}
+?>
