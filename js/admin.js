@@ -1,9 +1,10 @@
 $(function(){
+    console.log('Admin.js yüklendi!'); 
     const token = localStorage.getItem("token");
     const name = document.getElementById("name");
     const tripTag = document.getElementById("trips");
     const createBtn=document.getElementById("createBtn");
-
+    const couponsTag=document.getElementById("coupons");
     
 
     $.ajax({
@@ -45,6 +46,51 @@ $(function(){
         }
     });
 
+
+// Kuponları getir
+$.ajax({
+    url: "http://localhost:8080/handlers/companyCoupons.php",
+    method: "POST",
+    headers: {
+        "Authorization": "Bearer " + token
+    },
+    success: function(response){
+        console.log('Kupon Response:', response);
+
+        if(response.status === "success" && response.data && response.data.coupons) {
+            const coupons = response.data.coupons;
+
+            
+            if (Array.isArray(coupons)) {
+                coupons.forEach(data => {
+                    couponsTag.innerHTML += `
+                        <tr>
+                            <td width="5%"><i class="bi bi-qr-code"></i></td>
+                            <td>
+                                <span>ID: ${data.id}</span> | 
+                                <span>Kod: <strong>${data.code}</strong></span> | 
+                                <span>İndirim: %${data.discount}</span> | 
+                                <span>Limit: ${data.usage_limit}</span> | 
+                                <span>Son Tarih: ${data.expire_date}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                console.error("Coupons verisi array değil!");
+            }
+        } else {
+            console.error("Kupon verisi alınamadı:", response);
+        }
+    },
+    error: function(xhr, status, error) {
+        console.error("AJAX Hatası:", error);
+        console.error("Response:", xhr.responseText);
+    }
+});
+
+
+
     $('#saveTripBtn').click(function() {
         saveTrip();
     });
@@ -52,7 +98,59 @@ $(function(){
     $('#editTripModal .button:not(#saveTripBtn)').click(function() {
         closeModal(document.getElementById('editTripModal'));
     });
-    // Create trip
+
+    $(document).on('click', '#couponBtn', function(e) {
+        e.preventDefault();
+        
+        const expireDate = $('#couponExpireDate').val();
+        const discountPercentage = $('#discount').val();
+        const usageLimit=$('#usageLimit').val();
+
+        
+
+        
+        if (!expireDate) {
+            alert('Lütfen geçerlilik tarihini seçin.');
+            return;
+        }
+
+        if (!discountPercentage) {
+            alert('Lütfen indirim oranını girin.');
+            return;
+        }
+        if(!usageLimit){
+            alert("Lutfen limit sayisini kontrol edin");
+            return;
+        }
+
+        const data = {
+            expire_date: expireDate,
+            discount_percentage: parseInt(discountPercentage),
+            usageLimit:usageLimit
+        };
+
+        $.ajax({
+            url: "http://localhost:8080/handlers/generateCoupon.php",
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success === true) {
+                    alert(`Kupon başarıyla oluşturuldu!\nKupon Kodu: ${response.coupon_code}\nİndirim Oranı: %${response.discount_percentage}\nGeçerlilik Tarihi: ${response.expire_date}`);
+                    $('#couponExpireDate').val('');
+                    $('#discount').val('');
+                } else {
+                    alert('Hata: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('Kupon oluşturulurken hata oluştu');
+            }
+        });
+    });
     $('#createBtn').on('click', function(e){
         e.preventDefault();
         const data = {
@@ -137,7 +235,6 @@ function editTrip(tripId) {
 }
 
 
-// removed broken createBtn.click block; replaced with #createBtn handler above
 
 function saveTrip() {
     const token = localStorage.getItem("token");
@@ -149,7 +246,8 @@ function saveTrip() {
         price: parseFloat($('#editPrice').val()),
         departure_date: $('#editDepartureDate').val(),
         departure_time: $('#editDepartureTime').val(),
-        arrival_time: $('#editArrivalTime').val()
+        arrival_time: $('#editArrivalTime').val(),
+        capacity:27
     };
 
     if (!formData.departure_city || !formData.destination_city || !formData.price || 

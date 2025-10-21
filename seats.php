@@ -5,6 +5,7 @@ require_once './auth/verify_ticket_token.php';
 require_once './helpers/getBalance.php';
 require_once './helpers/getseats.php';
 require_once './helpers/getTicketInfo.php';
+require_once './helpers/getTripInfo.php';
 
 $ticket_key = $_ENV['TICKET_TOKEN'] ?? '';
 
@@ -32,10 +33,14 @@ $data = $result['data'];
 $balance = getBalance($data['user_id']);
 $booked_seats = getSeats($data['trip_id']);
 
-$ticket_info=getTicketInfo($data['trip_id']);
-$arrival_parts = explode(' ', $ticket_info['arrival_time']);
-$arrival_date = $arrival_parts[0];   
-$arrival_time = $arrival_parts[1];
+$trip_info = getTripInfo($data['trip_id']);
+$arrival_raw = $trip_info['arrival_time'] ?? '';
+if (!is_string($arrival_raw)) {
+    $arrival_raw = '';
+}
+$arrival_parts = $arrival_raw !== '' ? explode(' ', $arrival_raw) : [];
+$arrival_date = $arrival_parts[0] ?? '';
+$arrival_time = $arrival_parts[1] ?? '';
 
 
 
@@ -54,7 +59,7 @@ $arrival_time = $arrival_parts[1];
     <title>Koltuk Seç</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"
@@ -411,8 +416,8 @@ $arrival_time = $arrival_parts[1];
                             <span class="admit"><span class="admit"><?php echo $data['username'] ?></span></span>
                             <span class="line"></span>
                             <span class="num">
-                                <?php echo $ticket_info['departure_city'] ?>
-                                <span> <?php echo $ticket_info['destination_city'] ?></span>
+                                <?php echo $trip_info['departure_city'] ?? '' ?>
+                                <span> <?php echo $trip_info['destination_city'] ?? '' ?></span>
                             </span>
                         </div>
                         <div class="number">1</div>
@@ -422,9 +427,10 @@ $arrival_time = $arrival_parts[1];
                     </div>
                     <div class="check">
                         <div class="big">
-                            <?php echo strtoupper(substr($ticket_info['departure_city'], 0, 3)); ?> <br> <?php echo strtoupper(substr($ticket_info['destination_city'], 0, 3)); ?>
+                            <?php echo strtoupper(substr((string) ($trip_info['departure_city'] ?? ''), 0, 3)); ?> <br>
+                            <?php echo strtoupper(substr((string) ($trip_info['destination_city'] ?? ''), 0, 3)); ?>
                         </div>
-                        
+
                         <div class="number"><?php echo $arrival_date ?></div>
                         <div class="info">
 
@@ -432,15 +438,15 @@ $arrival_time = $arrival_parts[1];
                                 <div class="title">Saat</div>
                                 <div><?php echo $arrival_time ?></div>
                             </section>
-                                                        <section>
+                            <section>
                                 <div class="title">Yolcu Sayısı</div>
                                 <div><?php echo $data['passengers'] ?> </div>
                             </section>
                             <section>
                                 <div class="title">Koltuk</div>
-                                <div id="selectedSeatsDisplay"  >-</div>
+                                <div id="selectedSeatsDisplay">-</div>
                             </section>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -450,13 +456,26 @@ $arrival_time = $arrival_parts[1];
 
     </section>
     <div class="container" style="margin: auto; display: flex; justify-content: center; align-items: center;">
-        
-            
-                <span class="tag is-light is-large result">Kredi: <?php echo $balance ?> ₺<br>  Tutar: <?php echo $data['total_price'] ?> ₺</span>
 
-            
-            
-                <button id="payment" class="button is-info ml-5">Ödeme Yap</button>
+        <ul>
+
+            <li >
+                                <input class="input is-link" id="couponbar" type="text" placeholder="Indirim Kuponu" />
+                                <button class="button is-focused" id="discountBtn">Uygula</button>
+
+
+                <span class="tag is-light is-large result container">Kredi: <?php echo $balance ?> ₺<br> Tutar:
+                    <?php echo $data['total_price'] ?> ₺</span>
+            </li>
+            <li class="mt-5">
+                <button id="payment" class="button is-info ml-5 ">Ödeme Yap</button>
+
+            </li>
+
+        </ul>
+
+
+
 
 
     </div>
@@ -514,83 +533,94 @@ $arrival_time = $arrival_parts[1];
             font-weight: 700;
             z-index: 9999;
         }
-        .result{
-  min-height: 100px;
-}
+
+        .result {
+            min-height: 100px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     <script src="./js/seatselect.js"></script>
     <script src="./js/navbar.js"></script>
     <script>
 
-        
-    const notyf = new Notyf({
-        duration: 3000,
-        position: { x: 'right', y: 'top' },
-        dismissible: true,
-    });
 
-    
-    const $paymentBtn = $('#payment');
-    const token = localStorage.getItem("token");
-
-    function getUrlParameter(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    const value = urlParams.get(name);
-    
-    return value ? value : null;
-}
-const ticketToken = getUrlParameter('ticket');
+        const notyf = new Notyf({
+            duration: 3000,
+            position: { x: 'right', y: 'top' },
+            dismissible: true,
+        });
 
 
-    if ($paymentBtn.length) {
-         
-        $paymentBtn.on('click', async function() {
-           
-           
-            if (selectedSeats.length === 0) {
-                notyf.error("Lütfen en az bir koltuk seçin.");
-                return;
-            }
+        const $paymentBtn = $('#payment');
+        const token = localStorage.getItem("token");
 
-            if(selectedSeats.length != passengers){
-            notyf.error(`Yolcu sayısı kadar koltuk seçebilirsiniz.`);
-            return;
-            }
-            const requestBody = {
-                selected_seats: selectedSeats 
-            };
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
 
-            const url = `http://localhost:8080/handlers/payment.php?ticket=${ticketToken}`;
+            const value = urlParams.get(name);
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify(requestBody) 
-                });
+            return value ? value : null;
+        }
+        const ticketToken = getUrlParameter('ticket');
 
-                const data = await response.json();
 
-                if (!response.ok || data.status === 'error') {
-                    const errorMessage = data.message || `İstek başarısız oldu. Durum kodu: ${response.status}`;
-                    notyf.error(errorMessage);
-                    console.error("Fetch Error:", data);
+        if ($paymentBtn.length) {
+
+            $paymentBtn.on('click', async function () {
+
+
+                if (window.selectedSeats.length === 0) {
+                    notyf.error("Lütfen en az bir koltuk seçin.");
                     return;
                 }
 
-                window.location.href="/purchase.php"
+                if (window.selectedSeats.length != passengers) {
+                    notyf.error(`Yolcu sayısı kadar koltuk seçebilirsiniz.`);
+                    return;
+                }
+                const discount=localStorage.getItem("discount");
+                let requestBody;
+                if(!discount || discount!=""){
+                    requestBody = {
+                        selected_seats: window.selectedSeats,
+                        discount:discount
+                    };
+                }else{
+                    requestBody = {
+                        selected_seats: window.selectedSeats
+                    };
+                }
+                
 
-            } catch (error) {
-                notyf.error("Sunucuya bağlanılamadı veya bir hata oluştu.");
-                console.error("Ağ Hatası:", error);
-            }
-        });
-    }
+                const url = `http://localhost:8080/handlers/payment.php?ticket=${ticketToken}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok || data.status === 'error') {
+                        const errorMessage = data.message || `İstek başarısız oldu. Durum kodu: ${response.status}`;
+                        notyf.error(errorMessage);
+                        console.error("Fetch Error:", data);
+                        return;
+                    }
+
+                    window.location.href = "/purchase.php"
+
+                } catch (error) {
+                    notyf.error("Sunucuya bağlanılamadı veya bir hata oluştu.");
+                    console.error("Ağ Hatası:", error);
+                }
+            });
+        }
 
     </script>
 

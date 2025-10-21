@@ -2,45 +2,24 @@
 require '../vendor/autoload.php';
 require '../system/function.php'; 
 
-use Firebase\JWT\JWT;
-use Dotenv\Dotenv;
 
-try {
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
-} catch (\Exception $e) {
-    
-    error_log("Dotenv Yükleme Hatası: " . $e->getMessage());
-    
-    send_json_response("error", "Sunucu konfigürasyon hatası.");
+
+$required_files = [
+    __DIR__ . '/../auth/generateToken.php'
+];
+
+foreach ($required_files as $file) {
+    if (!file_exists($file)) {
+        error_log("HATA: Gerekli dosya bulunamadı: " . $file);
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'Sunucu yapılandırma hatası (eksik dosya).'
+        ]);
+        exit;
+    }
+    require_once $file;
 }
 
-
-$secret_key = $_ENV['JWT_SECRET_KEY'];
-
-
-function generateJWT(int $user_id, string $full_name, string $role): string
-{
-    global $secret_key;
-    
-    $timestamp = time();
-    $expiration_time = $timestamp + (60 * 60 * 3); 
-
-    $payload = [
-        'iat' => $timestamp,
-        'nbf' => $timestamp,
-        'exp' => $expiration_time,
-
-        'data' => [
-            'user_id' => $user_id,
-            'username' => $full_name,
-            'role' => $role
-        ]
-    ];
-
-    $jwt = JWT::encode($payload, $secret_key, 'HS256');
-    return $jwt;
-}
 
 function send_json_response($status, $message, $redirect = null, $delay = 1, $token = null) 
 {

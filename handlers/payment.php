@@ -33,6 +33,7 @@ try {
 $required_files = [
     __DIR__ . '/../auth/verify_token.php',
     __DIR__ . '/../auth/verify_ticket_token.php',
+    __DIR__ . '/../auth/verifyDiscountToken.php',
     __DIR__ . '/../helpers/getBalance.php',
     __DIR__ . '/../helpers/setTicket.php',
     __DIR__ . '/../helpers/setBalance.php',
@@ -88,12 +89,98 @@ if (!$result['valid']) {
 $data = $result['data'];
 
 // =====================
+// REQUEST DATA PROCESSING
+// =====================
+
+$input = file_get_contents('php://input');
+$request_data = json_decode($input, true);
+
+$selected_seats = $request_data['selected_seats'] ?? [];
+$discount_token = $request_data['discount'] ?? null;
+
+// =====================
+// DISCOUNT TOKEN VALIDATION
+// =====================
+
+$final_price = $data['total_price'];
+$discount_percentage = 0;
+
+if ($discount_token) {
+    $discount_result = verifyDiscountToken($discount_token);
+    
+    if (!$discount_result['valid']) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => $discount_result['message']
+        ]);
+        exit;
+    }
+    
+    // Kupon bilgilerini al
+    try {
+        require_once __DIR__ . '/../system/config.php';
+        $stmt = $db->prepare('
+            SELECT discount, usage_limit, expire_date
+            FROM Coupons
+            WHERE code = :code
+        ');
+        
+        $stmt->execute([':code' => $discount_result['data']['coupon_code']]);
+        $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$coupon) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Kupon bulunamadı'
+            ]);
+            exit;
+        }
+        
+        if ($coupon['usage_limit'] <= 0) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Kupon kullanım limiti dolmuş'
+            ]);
+            exit;
+        }
+        
+        $today = date('Y-m-d');
+        if ($coupon['expire_date'] < $today) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Kupon süresi dolmuş'
+            ]);
+            exit;
+        }
+        
+        $discount_percentage = $coupon['discount'];
+        $discount_amount = ($data['total_price'] * $discount_percentage) / 100;
+        $final_price = $data['total_price'] - $discount_amount;
+        
+        $update_stmt = $db->prepare('
+            UPDATE Coupons 
+            SET usage_limit = usage_limit - 1 
+            WHERE code = :code
+        ');
+        $update_stmt->execute([':code' => $discount_result['data']['coupon_code']]);
+        
+    } catch (PDOException $e) {
+        error_log('Kupon bilgisi alınırken hata: ' . $e->getMessage());
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Kupon bilgisi alınırken hata oluştu'
+        ]);
+        exit;
+    }
+}
+
+// =====================
 // BÜTÇE KONTROLÜ
 // =====================
 
 $budget = getBalance($data['user_id']);
 
-if ($data['total_price'] > $budget) {
+if ($final_price > $budget) {
     echo json_encode([
         'status' => 'error', 
         'message' => 'Kredi yeterli değil.'
@@ -148,15 +235,6 @@ $user_id = $result['data']['user_id'];
 $username = $result['data']['username'];
 $role = $result['data']['role'];
 
-// =====================
-// GÖNDERİLEN KOLTUKLARI ALMA
-// =====================
-
-$input = file_get_contents('php://input');
-$request_data = json_decode($input, true);
-
-$selected_seats = $request_data['selected_seats'] ?? [];
-
 if (!is_array($selected_seats) || empty($selected_seats)) {
     echo json_encode([
         'status' => 'error',
@@ -190,8 +268,8 @@ if (!empty($intersection)) {
 // =====================
 
 try {
-    setBalance($data['user_id'],$data['total_price']);
-    setTicketInfo($data['trip_id'], $data['user_id'], $data['total_price']);
+    setBalance($data['user_id'], $final_price);
+    setTicketInfo($data['trip_id'], $data['user_id'], $final_price);
     
     $success_count = 0;
     $error_seats = [];
@@ -208,11 +286,20 @@ try {
     }
     
     if (empty($error_seats)) {
-        echo json_encode([
+        $response_data = [
             'status' => 'success',
             'message' => 'Ödeme başarılı ve ' . $success_count . ' bilet kaydedildi.',
-            'user' => $result['data']
-        ]);
+            'user' => $result['data'],
+            'original_price' => $data['total_price'],
+            'final_price' => $final_price
+        ];
+        
+        if ($discount_percentage > 0) {
+            $response_data['discount_percentage'] = $discount_percentage;
+            $response_data['discount_amount'] = $data['total_price'] - $final_price;
+        }
+        
+        echo json_encode($response_data);
     } else {
 
         echo json_encode([

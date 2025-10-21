@@ -28,6 +28,7 @@
 
                     <ul class="menu-list">
                         <li><a class="is-active ">Genel</a></li>
+                        <li><a href="#kupon">Kupon</a></li>
                     </ul>
                 </aside>
             </div>
@@ -268,6 +269,161 @@
 
             </div>
         </div>
+
+        <div class="columns" id="kupon">
+            <div class="column is-7">
+
+                <div class="card-table">
+    <div class="content">
+        <table class="table is-fullwidth is-striped">
+            <thead>
+                <tr>
+                    <th width="5%"></th>
+                    <th>Kupon Bilgileri</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="coupons">
+            </tbody>
+        </table>
+    </div>
+</div>
+            </div>
+            <div class="column is-5">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            Kupon Ekle
+                        </p>
+                    </header>
+                    <div class="card-content" id="addTrip">
+                        <div class="field">
+                            <label class="label">İndirim Oranı (%)</label>
+                            <div class="control">
+                                <input class="input" id="discount" type="number" min="1" max="100"
+                                    placeholder="Örn: 10">
+                            </div>
+                        </div>
+                        <label class="label">Kupon adeti</label>
+                        <div class="control">
+                            <input class="input" id="usageLimit" type="number" min="1" max="100" placeholder="Örn: 10">
+                        </div>
+                                            <div class="field">
+                        <label class="label">Geçerlilik Tarihi</label>
+                        <div class="control">
+                            <input class="input" id="couponExpireDate" type="date" required>
+                        </div>
+                    </div>
+                    </div>
+
+
+
+                </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-link" id="couponBtn">Üret</button>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <!-- Edit Trip Modal -->
+            <div class="modal" id="editTripModal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Sefer Düzenle</p>
+                        <button class="delete" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <form id="editTripForm">
+                            <input type="hidden" id="editTripId" name="trip_id">
+
+                            <div class="field">
+                                <label class="label">Nereden</label>
+                                <div class="control">
+                                    <select class="input" type="text" id="editDepartureCity" name="departure_city"
+                                        required>
+                                        <option value="goreme"> Göreme(Nevşehir)</option>
+                                        <option value="avanos">Avanos(Nevşehir)</option>
+                                        <option value="kayseri">Kayseri (Merkez)</option>
+                                        <option value="konya">Konya (Merkez)</option>
+                                        <option value="ihlara">Ihlara(Aksaray)</option>
+                                        <option value="guzelyurt">Güzelyurt(Aksaray)</option>
+                                        <option value="uchisar">Uçhisar(Nevşehir)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Nereye</label>
+                                <div class="control">
+                                    <select class="input" type="text" id="editDestinationCity" name="destination_city"
+                                        required>
+                                        <option value="goreme"> Göreme(Nevşehir)</option>
+                                        <option value="avanos">Avanos(Nevşehir)</option>
+                                        <option value="kayseri">Kayseri (Merkez)</option>
+                                        <option value="konya">Konya (Merkez)</option>
+                                        <option value="ihlara">Ihlara(Aksaray)</option>
+                                        <option value="guzelyurt">Güzelyurt(Aksaray)</option>
+                                        <option value="uchisar">Uçhisar(Nevşehir)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Fiyat</label>
+                                <div class="control">
+                                    <input class="input" type="number" id="editPrice" name="price" min="0" step="0.01"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Kalkış Tarihi</label>
+                                <div class="control">
+                                    <input class="input" type="date" id="editDepartureDate" name="departure_date"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Kalkış Saati</label>
+                                <div class="control">
+                                    <input class="input" type="time" id="editDepartureTime" name="departure_time"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Varış Saati</label>
+                                <div class="control">
+                                    <input class="input" type="time" id="editArrivalTime" name="arrival_time" required>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <div class="buttons">
+                            <button class="button is-success" id="saveTripBtn">Kaydet</button>
+                            <button class="button">İptal</button>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+
+
+
+
+
+
+
+        </div>
+    </div>
     </div>
     </div>
     </div>

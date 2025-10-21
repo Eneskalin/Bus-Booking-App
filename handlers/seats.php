@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../system/function.php'; // burada $db tanımlı olmalı (PDO bağlantısı)
+require_once '../system/function.php'; 
 
 if (!isset($db) || !($db instanceof PDO)) {
     echo json_encode(['success' => false, 'message' => 'Veritabanı bağlantısı mevcut değil.']);
