@@ -1,5 +1,7 @@
+        const notyf = new Notyf();
+
 $(function(){
-    console.log('Admin.js yüklendi!'); 
+
     const token = localStorage.getItem("token");
     const name = document.getElementById("name");
     const tripTag = document.getElementById("trips");
@@ -110,16 +112,16 @@ $.ajax({
 
         
         if (!expireDate) {
-            alert('Lütfen geçerlilik tarihini seçin.');
+            notyf.error('Lütfen geçerlilik tarihini seçin.');
             return;
         }
 
         if (!discountPercentage) {
-            alert('Lütfen indirim oranını girin.');
+            notyf.error('Lütfen indirim oranını girin.');
             return;
         }
         if(!usageLimit){
-            alert("Lutfen limit sayisini kontrol edin");
+            notyf.error("Lutfen limit sayisini kontrol edin");
             return;
         }
 
@@ -139,15 +141,15 @@ $.ajax({
             data: JSON.stringify(data),
             success: function(response) {
                 if (response.success === true) {
-                    alert(`Kupon başarıyla oluşturuldu!\nKupon Kodu: ${response.coupon_code}\nİndirim Oranı: %${response.discount_percentage}\nGeçerlilik Tarihi: ${response.expire_date}`);
+                    notyf.success(`Kupon başarıyla oluşturuldu!\nKupon Kodu: ${response.coupon_code}\nİndirim Oranı: %${response.discount_percentage}\nGeçerlilik Tarihi: ${response.expire_date}`);
                     $('#couponExpireDate').val('');
                     $('#discount').val('');
                 } else {
-                    alert('Hata: ' + response.message);
+                    notyf.error('Hata: ' + response.message);
                 }
             },
             error: function() {
-                alert('Kupon oluşturulurken hata oluştu');
+                notyf.error('Kupon oluşturulurken hata oluştu');
             }
         });
     });
@@ -165,7 +167,7 @@ $.ajax({
         };
 
         if (!data.departure_city || !data.destination_city || !data.price || !data.departure_date || !data.departure_time || !data.arrival_time) {
-            alert('Lütfen tüm alanları doldurun');
+            notyf.error('Lütfen tüm alanları doldurun');
             return;
         }
 
@@ -179,14 +181,14 @@ $.ajax({
             data: JSON.stringify(data),
             success: function(response){
                 if(response.success === true) {
-                    alert('Sefer oluşturuldu');
+                    notyf.success('Sefer oluşturuldu');
                     location.reload();
                 } else {
-                    alert('Hata: ' + response.message);
+                    notyf.error('Hata: ' + response.message);
                 }
             },
             error: function(){
-                alert('Sefer oluşturulurken hata oluştu');
+                notyf.error('Sefer oluşturulurken hata oluştu');
             }
         });
     });
@@ -229,7 +231,7 @@ function editTrip(tripId) {
             }
         },
         error: function() {
-            alert('Sefer bilgileri alınırken hata oluştu');
+            notyf.error('Sefer bilgileri alınırken hata oluştu');
         }
     });
 }
@@ -252,7 +254,7 @@ function saveTrip() {
 
     if (!formData.departure_city || !formData.destination_city || !formData.price || 
         !formData.departure_date || !formData.departure_time || !formData.arrival_time) {
-        alert('Lütfen tüm alanları doldurun');
+        notyf.error('Lütfen tüm alanları doldurun');
         return;
     }
 
@@ -268,15 +270,15 @@ function saveTrip() {
         data: JSON.stringify(dataToSend),
         success: function(response){
             if(response.success === true) {
-                alert('Sefer başarıyla güncellendi');
+                notyf.success('Sefer başarıyla güncellendi');
                 closeModal(document.getElementById('editTripModal'));
                 location.reload();
             } else {
-                alert('Hata: ' + response.message);
+                notyf.error('Hata: ' + response.message);
             }
         },
         error: function() {
-            alert('Sefer güncellenirken hata oluştu');
+            notyf.error('Sefer güncellenirken hata oluştu');
         }
     });
 }

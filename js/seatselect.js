@@ -4,6 +4,8 @@ $(function () {
         position: { x: 'right', y: 'top' },
         dismissible: true,
     });
+        localStorage.removeItem("discount");
+
     const svgRoot = document.querySelector('#bus_svg svg');
     const maxSelectable = typeof passengers !== 'undefined' ? passengers : 1;
     const discountBtn = document.getElementById('discountBtn');

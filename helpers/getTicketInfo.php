@@ -7,7 +7,7 @@ function getTicketInfo($id){
             t.*, 
             tr.departure_city, 
             tr.destination_city, 
-            tr.departure_time,
+            tr.departure_time AS trip_datetime,
             bus.name,
             bus.logo_path
         FROM Tickets t
@@ -25,3 +25,4 @@ function getTicketInfo($id){
         return null;
     }
 }
+?>

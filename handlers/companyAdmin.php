@@ -117,19 +117,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action) {
 
             $departure_datetime = $departure_date . ' ' . $departure_time;
             // arrival_date verilmişse onu kullan, yoksa departure_date ile oluştur
+            $current_datetime = date('Y-m-d H:i:s');
             $arrival_datetime = ($arrival_date ? $arrival_date : $departure_date) . ' ' . $arrival_time;
-
-            $insert_sql = 'INSERT INTO Trips (company_id, departure_city, destination_city, departure_time, arrival_time, price, capacity) 
-                           VALUES (:company_id, :departure_city, :destination_city, :departure_time, :arrival_time, :price, :capacity)';
+            $departure_city_formatted = ucfirst($departure_city);
+            $destination_city_formatted = ucfirst($destination_city);
+            $insert_sql = 'INSERT INTO Trips (company_id, departure_city, destination_city, departure_time, arrival_time, price, capacity,created_date) 
+                           VALUES (:company_id, :departure_city, :destination_city, :departure_time, :arrival_time, :price, :capacity, :created_date)';
             $stmt = $db->prepare($insert_sql);
             $ok = $stmt->execute([
                 ':company_id' => $company_id,
-                ':departure_city' => $departure_city,
-                ':destination_city' => $destination_city,
+                ':departure_city' => $departure_city_formatted,
+                ':destination_city' => $destination_city_formatted,
                 ':departure_time' => $departure_datetime,
                 ':arrival_time' => $arrival_datetime,
                 ':price' => $price,
-                ':capacity' => $capacity
+                ':capacity' => $capacity,
+                ':created_date' => $current_datetime
             ]);
 
             if ($ok) {

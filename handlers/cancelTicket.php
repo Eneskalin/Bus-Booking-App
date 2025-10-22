@@ -6,12 +6,15 @@ use Dotenv\Dotenv;
 header('Content-Type: application/json');
 
 require '../vendor/autoload.php';
-require '../system/function.php';
+require_once '../system/function.php';
+require_once '../system/config.php'; 
+global $db; 
 
 $required_files = [
     __DIR__ . '/../auth/verify_token.php',
     __DIR__ . '/../helpers/getUserCompany.php',
-    __DIR__ . '/../helpers/getCompanyInfo.php'
+    __DIR__ . '/../helpers/getCompanyInfo.php',
+    __DIR__ . '/../helpers/getTicketInfo.php'
 ];
 
 foreach ($required_files as $file) {
@@ -72,30 +75,11 @@ if (!isset($input['ticket_id']) || empty($input['ticket_id'])) {
 
 $ticket_id = intval($input['ticket_id']);
 
-// =====================
-// 6️⃣ Veritabanı bağlantısı
-// =====================
-$conn = database();
 
 try {
-    // =====================
-    // 7️⃣ Bilet bilgilerini al
-    // =====================
-    $stmt = $conn->prepare("
-        SELECT t.user_id, t.trip_id, t.total_price 
-        FROM Tickets t 
-        WHERE t.ticket_id = ?
-    ");
-    $stmt->bind_param("i", $ticket_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
     
-    if ($result->num_rows === 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Bilet bulunamadı.']);
-        exit;
-    }
+    $ticket=getTicketInfo($ticket_id);
     
-    $ticket = $result->fetch_assoc();
     
     // =====================
     // 8️⃣ Kullanıcı kontrolü
@@ -105,31 +89,25 @@ try {
         exit;
     }
     
-    // =====================
-    // 9️⃣ Sefer bilgilerini al
-    // =====================
-    $stmt = $conn->prepare("
-        SELECT arrival_time 
-        FROM Trips 
-        WHERE trip_id = ?
-    ");
-    $stmt->bind_param("i", $ticket['trip_id']);
-    $stmt->execute();
-    $trip_result = $stmt->get_result();
+;
     
-    if ($trip_result->num_rows === 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Sefer bilgisi bulunamadı.']);
-        exit;
-    }
+
     
-    $trip = $trip_result->fetch_assoc();
-    $arrival_time = strtotime($trip['arrival_time']);
-    $current_time = time();
-    $time_difference = $arrival_time - $current_time;
+
     
     // =====================
     // 🔟 1 saat kontrolü (3600 saniye)
     // =====================
+
+$departure_time = isset($ticket['trip_datetime']) ? $ticket['trip_datetime'] : null;
+if (!$departure_time) {
+        error_log("HATA: Bilet bilgileri içinde sefer kalkış zamanı ('trip_datetime' anahtarı) bulunamadı.");
+        echo json_encode(['status' => 'error', 'message' => 'Sunucu hatası: Sefer zamanı bilgisi eksik.']);
+        exit;
+    }
+    $departure_timestamp = strtotime($departure_time);
+    $time_difference = $departure_timestamp - time();
+
     if ($time_difference < 3600) {
         echo json_encode([
             'status' => 'error', 
@@ -138,55 +116,63 @@ try {
         exit;
     }
     
-    // =====================
-    // 1️⃣1️⃣ Transaction başlat
-    // =====================
-    $conn->begin_transaction();
-    
-    // Booked_Seats'ten koltukları sil
-    $stmt = $conn->prepare("DELETE FROM Booked_Seats WHERE ticket_id = ?");
-    $stmt->bind_param("i", $ticket_id);
-    $stmt->execute();
-    
-    // Kullanıcının bakiyesine parayı iade et
-    $stmt = $conn->prepare("
-        UPDATE Users 
-        SET balance = balance + ? 
-        WHERE user_id = ?
-    ");
-    $stmt->bind_param("di", $ticket['total_price'], $user_id);
-    $stmt->execute();
-    
-    // Bileti sil
-    $stmt = $conn->prepare("DELETE FROM Tickets WHERE ticket_id = ?");
-    $stmt->bind_param("i", $ticket_id);
-    $stmt->execute();
-    
-    // Transaction'ı commit et
-    $conn->commit();
-    
-    echo json_encode([
-        'status' => 'success', 
-        'message' => 'Bilet başarıyla iptal edildi.',
-        'refunded_amount' => $ticket['total_price']
-    ]);
-    
+// ... try bloğunun içinde
+
+// =====================
+// 1️⃣1️⃣ Transaction başlat
+// =====================
+$db->beginTransaction();
+
+// Booked_Seats'ten koltukları sil (Bu tablo ismini koruyoruz)
+$stmt = $db->prepare("DELETE FROM Booked_Seats WHERE ticket_id = ?");
+if (!$stmt->execute([$ticket_id])) {
+    // Hata durumunda rollback'i tetiklemek için istisna fırlatın
+    throw new Exception("Booked_Seats silme hatası.");
+}
+
+// Kullanıcının bakiyesine parayı iade et
+$stmt = $db->prepare("
+    UPDATE Users
+    SET balance = balance + ?
+    WHERE user_id = ?
+");
+if (!$stmt->execute([$ticket['total_price'], $user_id])) {
+    // Hata durumunda rollback'i tetiklemek için istisna fırlatın
+    throw new Exception("Bakiye iade hatası.");
+}
+
+// Bileti sil (Sütun adı 'ticket_id' yerine 'id' olarak DÜZELTİLDİ)
+$stmt = $db->prepare("DELETE FROM Tickets WHERE id = ?");
+if (!$stmt->execute([$ticket_id])) {
+    // Hata durumunda rollback'i tetiklemek için istisna fırlatın
+    throw new Exception("Bilet silme hatası.");
+}
+
+
+$db->commit();
+
+// ...
+
+echo json_encode([
+    'status' => 'success',
+    'message' => 'Bilet başarıyla iptal edildi.',
+    'refunded_amount' => $ticket['total_price']
+]);
+
 } catch (Exception $e) {
-    // Hata durumunda rollback yap
-    if ($conn) {
-        $conn->rollback();
+
+    if (isset($db) && $db->inTransaction()) {
+        $db->rollBack();
     }
     error_log("Bilet iptal hatası: " . $e->getMessage());
     echo json_encode([
-        'status' => 'error', 
+        'status' => 'error',
         'message' => 'Bilet iptal edilirken bir hata oluştu.'
     ]);
 } finally {
     if (isset($stmt)) {
-        $stmt->close();
     }
-    if (isset($conn)) {
-        $conn->close();
+    if (isset($db)) {
     }
 }
 ?>
