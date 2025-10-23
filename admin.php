@@ -14,6 +14,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
 </head>
 
 <body>
@@ -430,12 +432,12 @@
     <?php require_once 'inc/footer.php'; ?>
 
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="./js/navbar.js"></script>
 <script src="./js/admin.js"></script>
 <script>
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Functions to open and close a modal
         function openModal($el) {
             $el.classList.add('is-active');
         }

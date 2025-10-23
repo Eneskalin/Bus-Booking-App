@@ -17,6 +17,7 @@
         <div class="title login">Giriş Yap</div>
         <div class="title signup">Kayıt Ol</div>
       </div>
+      
       <div class="form-container">
         <div class="slide-controls">
           <input type="radio" name="slide" id="login" checked>
