@@ -11,7 +11,7 @@ require_once '../helpers/getTicketInfo.php';
 require_once '../helpers/getBookedSeats.php';
 
 // =====================
-// 3️⃣ Header'dan token al
+// 3️ Header'dan token al
 // =====================
 $token = null;
 $headers = function_exists('getallheaders') ? getallheaders() : [];
@@ -33,7 +33,7 @@ if (!$token) {
 }
 
 // =====================
-// 4️⃣ Token doğrula
+// 4️ Token doğrula
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {
@@ -77,7 +77,7 @@ if ($ticketInfo['user_id'] != $user_id) {
 }
 
 // =====================
-// 7️⃣ Verileri hazırla
+// 7 Verileri hazırla
 // =====================
 // Tarih formatını düzenle
 $trip_date = date('d/m/Y', strtotime($ticketInfo['trip_datetime']));

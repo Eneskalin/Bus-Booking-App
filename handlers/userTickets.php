@@ -56,7 +56,7 @@ foreach ($required_files as $file) {
 
 
 // =====================
-// 3️⃣ Header'dan token al
+// 3️ Header'dan token al
 // =====================
 $token = null;
 $headers = function_exists('getallheaders') ? getallheaders() : [];
@@ -78,7 +78,7 @@ if (!$token) {
 }
 
 // =====================
-// 4️⃣ Token doğrula
+// 4️ Token doğrula
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {

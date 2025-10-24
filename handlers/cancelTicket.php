@@ -30,7 +30,7 @@ foreach ($required_files as $file) {
 }
 
 // =====================
-// 3️⃣ Header'dan token al
+//  Header'dan token al
 // =====================
 $token = null;
 $headers = function_exists('getallheaders') ? getallheaders() : [];
@@ -51,7 +51,7 @@ if (!$token) {
 }
 
 // =====================
-// 4️⃣ Token doğrula
+//  Token doğrula
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {
@@ -64,7 +64,7 @@ $username = $result['data']['username'];
 $role = $result['data']['role'];
 
 // =====================
-// 5️⃣ POST verilerini al
+//  POST verilerini al
 // =====================
 $input = json_decode(file_get_contents('php://input'), true);
 
@@ -78,7 +78,7 @@ $ticket_id = intval($input['ticket_id']);
 try {
     
     // =====================
-    // 6️⃣ Bilet bilgilerini al
+    //  Bilet bilgilerini al
     // =====================
     $ticket = getTicketInfo($ticket_id);
     
@@ -91,7 +91,7 @@ try {
     }
     
     // =====================
-    // 7️⃣ Bilet durumu kontrolü
+    //  Bilet durumu kontrolü
     // =====================
     if (isset($ticket['status']) && $ticket['status'] === 'cancelled') {
         echo json_encode(['status' => 'error', 'message' => 'Bu bilet zaten iptal edilmiş.']);
@@ -99,7 +99,7 @@ try {
     }
     
     // =====================
-    // 8️⃣ Kullanıcı kontrolü
+    //  Kullanıcı kontrolü
     // =====================
     if (!isset($ticket['user_id'])) {
         error_log("HATA: Bilet bilgilerinde 'user_id' anahtarı bulunamadı.");
@@ -113,7 +113,7 @@ try {
     }
     
     // =====================
-    // 9️⃣ Fiyat kontrolü
+    //  Fiyat kontrolü
     // =====================
     if (!isset($ticket['total_price'])) {
         error_log("HATA: Bilet bilgilerinde 'total_price' anahtarı bulunamadı.");
@@ -122,7 +122,7 @@ try {
     }
     
     // =====================
-    // 🔟 1 saat kontrolü (3600 saniye)
+    // 1 saat kontrolü (3600 saniye)
     // =====================
     $departure_time = isset($ticket['trip_datetime']) ? $ticket['trip_datetime'] : null;
     if (!$departure_time) {
@@ -149,7 +149,7 @@ try {
     }
     
     // =====================
-    // 1️⃣1️⃣ Transaction başlat
+    //  Transaction başlat
     // =====================
     $db->beginTransaction();
 

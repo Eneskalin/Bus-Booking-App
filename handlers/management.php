@@ -53,7 +53,7 @@ if (!$token) {
 }
 
 // =====================
-// 4️⃣ Token doğrula
+// 4 Token doğrula
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {

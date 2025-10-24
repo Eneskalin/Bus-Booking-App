@@ -19,7 +19,7 @@ $token_ticket = $_ENV['TICKET_TOKEN'] ?? '';
 
 
 // =====================
-// 3️⃣ Header'dan token al
+// 3️ Header'dan token al
 // =====================
 $token = null;
 $headers = function_exists('getallheaders') ? getallheaders() : [];
@@ -40,7 +40,7 @@ if (!$token) {
 }
 
 // =====================
-// 4️⃣ Token doğrula
+// 4️ Token doğrula
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {
@@ -53,7 +53,7 @@ $username = $result['data']['username'];
 $role = $result['data']['role'];
 
 // =====================
-// 5️⃣ Gönderilen JSON verisini al
+// 5️ Gönderilen JSON verisini al
 // =====================
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
@@ -68,7 +68,7 @@ $totalPrice = $data['totalPrice'] ?? 0;
 $passengers = $data['passengers'] ?? [];
 
 // =====================
-// 6️⃣ Ticket Token oluştur
+// 6️ Ticket Token oluştur
 // =====================
 $timestamp = time();
 $expiration_time = $timestamp + (60 * 60 * 3);
