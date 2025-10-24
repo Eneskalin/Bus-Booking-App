@@ -3,7 +3,8 @@ $(document).ready(function(){
     const loginBtn = $("#loginbtn");
     const profileBtn = $("#profile");
     const name = $("#name");
-
+    const admin = $("#adminMenu");
+    const company=$("#companyMenu");
 
     if (token) {
         $.ajax({
@@ -18,6 +19,19 @@ $(document).ready(function(){
                     name.text(response.user.username);
                     loginBtn.hide();
                     profileBtn.show();
+                    
+if(response.user.role === "user"){
+    admin.hide();
+    company.hide();
+}
+else if(response.user.role === "company"){
+    company.show();
+    admin.hide();
+}
+else if(response.user.role === "admin"){
+    company.hide();
+    admin.show();
+}
                 } else {
                     loginBtn.show();
                     profileBtn.hide();
@@ -29,8 +43,13 @@ $(document).ready(function(){
             }
         });
     } else {
-        // Token yoksa giriş butonu görünür
         loginBtn.show();
         profileBtn.hide();
     }
 });
+
+$('#logoutBtn').click(function(){
+    localStorage.removeItem("token")
+    window.location.href="./login.php";
+})
+

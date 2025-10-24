@@ -148,9 +148,7 @@ buyButtons.forEach(function (button, index) {
                 button.classList.remove('is-loading');
             }
             // Başarılı
-            else if (data.success === true) {
-                notyf.success(data.message || "Bilet başarıyla oluşturuldu!");
-                
+            else if (data.success === true) {                
                 
                 // Yönlendirme
                 if (data.redirect_url) {
@@ -170,14 +168,14 @@ buyButtons.forEach(function (button, index) {
             }
             
             else {
-                console.warn("⚠️ Bilinmeyen yanıt formatı:", data);
+                console.warn(" Bilinmeyen yanıt formatı:", data);
                 notyf.error("Beklenmeyen yanıt alındı.");
                 button.disabled = false;
                 button.classList.remove('is-loading');
             }
         })
         .catch(error => {
-            console.error("❌ Fetch Hatası:", error);
+            console.error(" Fetch Hatası:", error);
             notyf.error("Sunucuya bağlanırken bir hata oluştu: " + error.message);
             button.disabled = false;
             button.classList.remove('is-loading');

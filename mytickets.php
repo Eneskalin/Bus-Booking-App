@@ -88,7 +88,10 @@
 
     <?php require_once 'inc/footer.php'; ?>
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
 <script src="./js/navbar.js"></script>
 <script src="./js/userTickets.js"></script>
+
 
 </html>

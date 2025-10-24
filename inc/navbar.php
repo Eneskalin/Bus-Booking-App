@@ -22,10 +22,11 @@
                             <span id="name" style="margin-left: 6px;"></span>
                         </a>
                         <div class="navbar-dropdown">
-                            <a class="navbar-item is-size-6" href="admin.php">Profil</a>
+                            <a class="navbar-item is-size-6" id="companyMenu" href="./admin.php">Firma Menu</a>
+                            <a class="navbar-item is-size-6" id="adminMenu" href="./administrator.php">Yonetim</a>
                             <a class="navbar-item is-size-6" href="mytickets.php">Biletlerim</a>
                             <hr class="navbar-divider">
-                            <a class="navbar-item is-size-6" href="logout.php">Çıkış Yap</a>
+                            <a class="navbar-item is-size-6" id="logoutBtn" >Çıkış Yap</a>
                         </div>
                     </div>
 

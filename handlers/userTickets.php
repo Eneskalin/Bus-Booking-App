@@ -72,6 +72,7 @@ if (isset($headers['Authorization'])) {
 }
 
 if (!$token) {
+     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Token bulunamadı. Lütfen giriş yapın.']);
     exit;
 }
@@ -81,6 +82,7 @@ if (!$token) {
 // =====================
 $result = verifyJWT($token);
 if (!$result['valid']) {
+     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => $result['message']]);
     exit;
 }

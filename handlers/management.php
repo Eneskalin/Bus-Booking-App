@@ -47,6 +47,7 @@ if (isset($headers['Authorization'])) {
 }
 
 if (!$token) {
+    http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Token bulunamadı. Lütfen giriş yapın.']);
     exit;
 }
@@ -66,6 +67,7 @@ $role = $result['data']['role'];
 
 
 if ($role != "admin") {
+    http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Yetkisiz erisim']);
     exit;
 }

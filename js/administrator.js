@@ -17,18 +17,20 @@ $(function(){
         headers: {
             "Authorization": "Bearer " + token
         },
+        dataType: "json",
         success: function(response){
             console.log(response);
 
             if(response.success === false){
+                window.location.href='../forbidden.php';
             } else {
                 const companies = response.companies;
                 const users=response.users;
                 const coupons=response.coupons; 
 
-if (Array.isArray(companies)) {
-    companies.forEach(company => {
-        companyTag.innerHTML += `
+                if (Array.isArray(companies)) {
+                    companies.forEach(company => {
+                    companyTag.innerHTML += `
             <tr>
                 <td width="5%"><i class="bi bi-bus-front"></i></td>
                 <td>
@@ -83,7 +85,19 @@ if(Array.isArray(coupons)){
 
 
             }
+        },
+        error: function(xhr, status, error) {
+        console.error("AJAX Hatası:", error);
+        console.log("Status Code:", xhr.status);
+        
+        // 403 veya 401 gelirse forbidden'a yönlendir
+        if(xhr.status === 403 || xhr.status === 401) {
+            window.location.href = '../forbidden.php';
+            return;
         }
+        
+        console.error("Bir hata oluştu: " + error);
+    }
     });
 
 

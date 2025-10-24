@@ -9,6 +9,7 @@ $(function () {
     const svgRoot = document.querySelector('#bus_svg svg');
     const maxSelectable = typeof passengers !== 'undefined' ? passengers : 1;
     const discountBtn = document.getElementById('discountBtn');
+
     const token = localStorage.getItem("token");
     if (!svgRoot) return;
 
@@ -18,6 +19,15 @@ $(function () {
         const code = $("#couponbar").val().trim();
         if (code === "") {
             notyf.error("Kupon boş olamaz");
+            return;
+        }
+
+        // URL'den ticket token'ını al
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketToken = urlParams.get('ticket');
+        
+        if (!ticketToken) {
+            notyf.error("Bilet bilgisi bulunamadı");
             return;
         }
 
@@ -31,7 +41,8 @@ $(function () {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    coupon_code: code
+                    coupon_code: code,
+                    ticket_token: ticketToken
                 })
             });
 
@@ -49,7 +60,11 @@ $(function () {
             const data = await response.json();
 
             if (data.status === 'success') {
+                
                 notyf.success(`Kupon uygulandı!`);
+                
+
+
                 localStorage.setItem("discount", data.token); 
                 
                 if (data.new_price) {

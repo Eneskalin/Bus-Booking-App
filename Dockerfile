@@ -9,7 +9,6 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 FROM php:8.2-apache 
 
-
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     git \
@@ -17,19 +16,23 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+    libwebp-dev \
+    zlib1g-dev \
+    libonig-dev \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_sqlite gd mbstring
+RUN docker-php-ext-configure gd \
+    --with-freetype=/usr/include/ \
+    --with-jpeg=/usr/include/ \
+    --with-webp=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_sqlite mbstring
 
 RUN a2enmod rewrite
 
 COPY . /var/www/html/
 
 COPY --from=composer_install /app/vendor /var/www/html/vendor
-
 
 RUN mkdir -p /var/www/html/storage/tickets && chown -R www-data:www-data /var/www/html/storage
 

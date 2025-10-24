@@ -51,20 +51,20 @@
                     <div class="grid has-text-centered">
                         <div class="cell">
                             <article class="box">
-                                <p class="title">439</p>
-                                <p class="subtitle">Gelecek Sefer</p>
+                                <p class="title">-</p>
+                                <p class="subtitle">Firma</p>
                             </article>
                         </div>
                         <div class="cell">
                             <article class="box">
-                                <p class="title">59k</p>
-                                <p class="subtitle">Gecmiş Sefer</p>
+                                <p class="title">-</p>
+                                <p class="subtitle">Sefer</p>
                             </article>
                         </div>
                         <div class="cell">
                             <article class="box">
                                 <p class="title">3.4k</p>
-                                <p class="subtitle">Toplam Sefer</p>
+                                <p class="subtitle">Musteri</p>
                             </article>
                         </div>
                     </div>
@@ -328,6 +328,7 @@
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </html>

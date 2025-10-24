@@ -1,7 +1,7 @@
     <footer class="footer has-background-dark	 ">
         <div class="content has-text-centered">
             <p>
-                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>.
+                <strong>Cappadocia Tur</strong> by <a href="https://eneskalin.com">Enes Kalin</a>.
                 The source code is licensed
                 <a href="https://opensource.org/license/mit">MIT</a>. The
                 website content is licensed

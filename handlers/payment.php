@@ -268,14 +268,15 @@ if (!empty($intersection)) {
 // =====================
 
 try {
+    
     setBalance($data['user_id'], $final_price);
-    setTicketInfo($data['trip_id'], $data['user_id'], $final_price);
+    $ticket_id = setTicketInfo($data['trip_id'], $data['user_id'], $final_price);
     
     $success_count = 0;
     $error_seats = [];
 
     foreach ($selected_seats as $seat) {
-        $setSeat_result = setSeat($data['trip_id'], $seat);
+        $setSeat_result = setSeat($ticket_id, $seat);
         
         if ($setSeat_result) { 
             $success_count++;

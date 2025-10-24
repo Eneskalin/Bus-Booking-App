@@ -45,7 +45,20 @@ $(function(){
                     console.error("Trips array is missing or invalid in the response.");
                 }
             }
+        },
+                error: function(xhr, status, error) {
+        console.error("AJAX Hatası:", error);
+        console.log("Status Code:", xhr.status);
+        
+        // 403 veya 401 gelirse forbidden'a yönlendir
+        if(xhr.status === 403 || xhr.status === 401) {
+            window.location.href = '../forbidden.php';
+            return;
         }
+        
+        console.error("Bir hata oluştu: " + error);
+    }
+        
     });
 
 
