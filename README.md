@@ -27,6 +27,10 @@ Docker ile ayağa kaldırın
  docker compose up --build
 ```
 
+```bash
+ localhost:8080
+```
+
 
   
 ## Ortam Değişkenleri
